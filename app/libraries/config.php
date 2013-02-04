@@ -38,7 +38,7 @@ class Config {
 		}
 	}
 	
-	static public function get($name) {
+	static public function get($name,$default=NULL) {
 		$val = NULL;
 		
 		if (strpos($name,'.') === false) {
@@ -51,7 +51,7 @@ class Config {
 			$val = self::$data[$e[0]][$e[1]];
 		}
 		
-		return $val;
+		return ($val === NULL) ? $default : $val;
 	}
 	
 	static public function set($name,$value) {

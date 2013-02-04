@@ -39,10 +39,10 @@ jQuery.fn.mvcFormHidden = function (name, value) {
 
 protector = {};
 
-protector.login = function(formid,email,password,rsakey) {
-	var form = $('#'.formid);
+protector.login = function(formid,email,password) {
+	var form = $('#'+formid);
 	
-	form.mvcFormHidden('secure_password',RSA.encrypt(password, rsakey));
+	form.mvcFormHidden('secure_password',RSA.encrypt(password, protector.rsakey));
 	
 	var ts = Math.floor((new Date()).getTime() / 1000); /* UTC timestamp */
 	form.mvcFormHidden('secure_timestamp',ts);
@@ -51,19 +51,22 @@ protector.login = function(formid,email,password,rsakey) {
 	form.mvcFormHidden('hmac',hmac);
 
 	/* AES Password so you real password isn't stored */
-	var aes_password = sha256(Math.random() + email + password);
-	form.mvcFormHidden('secure_session_key',RSA.encrypt(aes_password, rsakey));
+	protector.aes_password = sha256(Math.random() + email + password);
+	form.mvcFormHidden('secure_session_key',RSA.encrypt(protector.aes_password, protector.rsakey));
 
-	$.cookie('aes_password', aes_password);
+	$.cookie('aes_password', protector.aes_password);
 }
 
-function makePayload(formid,submit) {
-	var payload = $('#'+formid).mvcForm2Obj();
-	var password = $.jStorage.get('secure_session_key');
-	var payload_aes = Aes.Ctr.encrypt($.toJSON(payload), password, 256);
+protector.submit = function(formid,submit) {
+	var form = $('#'+formid);
+	var payload = form.mvcForm2Obj();
+	payload.protector_timestamp = Math.floor((new Date()).getTime() / 1000); /* UTC timestamp */
+	var payload_aes = Aes.Ctr.encrypt($.toJSON(payload), protector.aes_password, 256);
 	
-	$('body').append('<form id="payload_form" method="post" action="' + $('#exampleform').attr('action') + '"><input type="hidden" id="payload" name="payload" value=""></form>');
+	$('#payload_form').remove();
+	$('body').append('<form id="payload_form" method="post" action="' + form.attr('action') + '"><input type="hidden" id="payload" name="payload" value=""></form>');
 	$('#payload').val(payload_aes);
+	
 	if (!submit) {
 		$('#payload_form').submit();
 	}

@@ -1,5 +1,5 @@
 <?php
 
-$config['dsn'] = 'mysql:host=localhost;dbname=ptest';
-$config['username'] = 'root';
-$config['password'] = 'root';
+$config['dsn'] = 'mysql:host=localhost;dbname=xxx';
+$config['username'] = '';
+$config['password'] = '';

@@ -3,3 +3,4 @@
   <input type="password" class="input-large" placeholder="Password" id="password" value="password123">
   <button id="submit" type="submit" class="btn">Sign in</button>
 </form>
+<p><a href="/form">Try to access protected page</a></p>

@@ -11,8 +11,9 @@
 
 class View {
 	static public $init = false;
-	static public $layout = 'layout';
-	static public $body = 'body';
+	static public $layout;
+	static public $body;
+	static public $path;
 	static public $app_path;
 	static public $default;
 	static public $data;
@@ -20,6 +21,9 @@ class View {
 	static public function init(&$app,$default='') {
 		self::$init = true;
 		self::$data = new stdClass;
+		
+		self::$layout = Config::get('view.layout','layout');
+		self::$body = Config::get('view.body','body');
 		
 		self::$app_path = $app::$path;
 		self::$default = $default;

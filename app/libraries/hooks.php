@@ -58,13 +58,14 @@ class Hooks {
 	/* pre controller junk here */
 	static public function preController(&$app) {
 		/* attach our view object & config object to the application */
-		$request = (empty($app::$request)) ? '' : $app::$request.'/';
-		$default_view = $app::$controller.'/'.$request.$app::$method;
+		$request = (empty($app::$request)) ? '' : '_'.$app::$request;
+		$default_view = $app::$controller.'/'.$app::$method.$request;
 		
 		View::init($app,$default_view);
 
 		View::setSitename('Simple MVC Template');
 		View::setBase_url($app::$base_url);
+		View::setUri($app::$uri);
 
 		/* database connection - if needed */
 		Database::connect(Config::get('db.dsn'),Config::get('db.username'),Config::get('db.password'));

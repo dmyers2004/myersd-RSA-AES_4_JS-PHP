@@ -20,6 +20,17 @@ class general {
 		return $input;
 	}
 
+	static public function payload2post(&$ary,$payload,$key) {
+		$ary = (array)json_decode(AesCtr::decrypt($payload, $key, 256));
+		return $ary;
+	}
+
+	static public function Timeout($timestamp,$seconds = 300) {
+		$utc_time = time();
+		$difference = abs($utc_time - (int)$timestamp);
+		return ($difference > $seconds) ? FALSE : TRUE;
+	}
+
 	/* basic create url */
 	static public function createurl($url='') {
 		return Application::$base_url.'/'.trim($url,'/');
