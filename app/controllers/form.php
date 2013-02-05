@@ -12,12 +12,7 @@
 
 class formController extends baseAdminController {
 
-	public function __construct() {
-		parent::__construct();
-	}
-
-	public function indexAction() {
-	}
+	public function indexAction() {}
 	
 	public function indexPostAction() {
 		$ary = (array)json_decode(AesCtr::decrypt($_POST['payload'], $_SESSION['session_key'], 256));

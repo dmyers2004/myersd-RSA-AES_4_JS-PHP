@@ -10,7 +10,7 @@
 	*
 	*/
 
-class baseAdminController {
+class baseAdminController extends basePublicController {
 
 	public function __construct() {
 		if (empty($_SESSION['session_key'])) {

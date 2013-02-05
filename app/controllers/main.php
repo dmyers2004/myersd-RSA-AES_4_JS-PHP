@@ -12,10 +12,6 @@
 
 class mainController extends basePublicController {
 
-	public function __construct() {
-		parent::__construct();
-	}
-
 	public function indexAction() {
 		session_destroy();
 	
@@ -43,7 +39,6 @@ class mainController extends basePublicController {
 		General::redirect('/');
 	}
 	
-	public function notloggedinAction() {
-	}
+	public function notloggedinAction() {}
 
 } /* end controller */
