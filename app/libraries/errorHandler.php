@@ -31,7 +31,8 @@ Code: '.$exception->getCode().'<br>
 Syntax Error: '.$exception->getMessage().'<br>
 File: '.$exception->getFile().'<br>
 Line: '.$exception->getLine().'<br>
-</code></body></html>');
+</code>
+<pre><!--'.substr(print_r(debug_backtrace(),true),7,-2).'--></pre></body></html>');
 	}
 
 } /* end error handler */

@@ -17,16 +17,12 @@ class formController extends baseAdminController {
 	}
 
 	public function indexAction() {
-		View::setJs('<script src="'.Application::$base_url.'/assets/js/page/form/index.js"></script>');
 	}
 	
 	public function indexPostAction() {
-		General::payload2post($_POST,$_POST['payload'],$_SESSION['session_key']);
+		$ary = (array)json_decode(AesCtr::decrypt($_POST['payload'], $_SESSION['session_key'], 256));
 		
-		$dmatch = (General::Timeout($_POST['protector_timestamp'])) ? 'Pass' : 'fail';
-		
-		View::setDMatch($dmatch);
-		View::setObj(print_r($_POST,true));
+		View::setObj(print_r($ary,true));
 	}
 	
 } /* end controller */

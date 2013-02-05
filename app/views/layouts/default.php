@@ -39,7 +39,7 @@
 
 		<script src="<?=$base_url ?>/assets/js/jquery-extras/form.js"></script>
 		<script src="<?=$base_url ?>/assets/js/jquery-extras/jquery.json-2.3.js"></script>
-		<script src="<?=$base_url ?>/assets/js/jquery-extras/jquery.cookie.js"></script>
+		<script src="<?=$base_url ?>/assets/js/jquery-extras/jstorage.js"></script>
 
 		<script src="<?=$base_url ?>/assets/js/site.js"></script>
 		<?=$js ?>

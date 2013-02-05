@@ -1,3 +1,5 @@
+/* Don Myers 2011 MIT License */
+
 /*
 Convert Form to JSON Object
 basic
@@ -37,37 +39,35 @@ jQuery.fn.mvcFormHidden = function (name, value) {
 	});
 };
 
-protector = {};
+jQuery.fn.protectorSend = function (payloadextra,hiddenextra,send) {
+	var form = jQuery(this);
 
-protector.login = function(formid,email,password) {
-	var form = $('#'+formid);
-	
-	form.mvcFormHidden('secure_password',RSA.encrypt(password, protector.rsakey));
-	
-	var ts = Math.floor((new Date()).getTime() / 1000); /* UTC timestamp */
-	form.mvcFormHidden('secure_timestamp',ts);
+	jQuery('#payload_form').remove();
+	jQuery('<form />').attr('id', 'payload_form').attr('method', 'post').attr('action', form.attr('action')).appendTo('body');
 
-	var hmac = sha256(email + password + ts); /* create a hash-based message authentication code */
-	form.mvcFormHidden('hmac',hmac);
-
-	/* AES Password so you real password isn't stored */
-	protector.aes_password = sha256(Math.random() + email + password);
-	form.mvcFormHidden('secure_session_key',RSA.encrypt(protector.aes_password, protector.rsakey));
-
-	$.cookie('aes_password', protector.aes_password);
-}
-
-protector.submit = function(formid,submit) {
-	var form = $('#'+formid);
 	var payload = form.mvcForm2Obj();
-	payload.protector_timestamp = Math.floor((new Date()).getTime() / 1000); /* UTC timestamp */
+
+	payload.timestamp = Math.floor((new Date()).getTime() / 1000); /* UTC timestamp */
+
+	/* add payload extras */
+	if (payloadextra) {
+		for (var key in payloadextra) {
+			payload[key] = payloadextra[key];
+		}
+	}
+	
 	var payload_aes = Aes.Ctr.encrypt($.toJSON(payload), protector.aes_password, 256);
 	
-	$('#payload_form').remove();
-	$('body').append('<form id="payload_form" method="post" action="' + form.attr('action') + '"><input type="hidden" id="payload" name="payload" value=""></form>');
-	$('#payload').val(payload_aes);
+	jQuery('#payload_form').mvcFormHidden('payload',payload_aes);
 	
-	if (!submit) {
-		$('#payload_form').submit();
+	/* add hidden extras */
+	if (hiddenextra) {
+		for (var key in hiddenextra) {
+			jQuery('#payload_form').mvcFormHidden(key,hiddenextra[key]);
+		}
+	}
+
+	if (!send) {
+		jQuery('#payload_form').submit();
 	}
 }

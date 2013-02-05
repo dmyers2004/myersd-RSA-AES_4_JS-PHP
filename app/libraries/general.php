@@ -20,15 +20,10 @@ class general {
 		return $input;
 	}
 
-	static public function payload2post(&$ary,$payload,$key) {
-		$ary = (array)json_decode(AesCtr::decrypt($payload, $key, 256));
-		return $ary;
-	}
-
-	static public function Timeout($timestamp,$seconds = 300) {
+	static public function timeout($timestamp,$seconds = 30) {
 		$utc_time = time();
 		$difference = abs($utc_time - (int)$timestamp);
-		return ($difference > $seconds) ? FALSE : TRUE;
+		return ($difference > $seconds) ? TRUE : FALSE;
 	}
 
 	/* basic create url */

@@ -17,38 +17,25 @@ class mainController extends basePublicController {
 	}
 
 	public function indexAction() {
-		View::setJs('<script src="'.Application::$base_url.'/assets/js/page/main/index.js"></script>');
-
+		session_destroy();
+	
 		$key = preg_replace("![^\x20-\x7E]!", '', file_get_contents('app/libraries/keys/public.key'));
 
 		View::setRsaPub($key);
+		
+		View::setFlashMsg($_SESSION['flash_message']);
+		$_SESSION['flash_message'] = '';
 	}
 	
 	public function indexPostAction() {
 		$private = file_get_contents('app/libraries/keys/private.key');
-		
-		$email = $_POST['email'];
-		$secure_timestamp = $_POST['secure_timestamp'];
-		$hmac = $_POST['hmac'];
 
-		$secure_password = $_POST['secure_password'];
-		$password = General::rsa_decrypt($secure_password,$private);
+		$_SESSION['session_key'] = General::rsa_decrypt($_POST['aes_password'],$private);
 
-		$session_key = General::rsa_decrypt($_POST['secure_session_key'],$private);
-		$_SESSION['session_key'] = $session_key;
-				
-		$genhmac = hash('sha256',$email.$password.$secure_timestamp);
-		$match = ($hmac == $genhmac) ? 'Pass' : 'Fail';
-		
-		$dmatch = (General::Timeout($_POST['secure_timestamp'])) ? 'Pass' : 'fail';
-		
-		View::setHMatch($match);
-		View::setPosted(print_r($_POST,true));
-		View::setPassword($password);
-		View::setSecureHmac($hmac);
-		View::setGeneratedHmac($genhmac);
-		View::setDMatch($dmatch);
-		View::setDifference($difference);
+		$ary = (array)json_decode(AesCtr::decrypt($_POST['payload'], $_SESSION['session_key'], 256));
+
+		View::setSessionKey($_SESSION['session_key']);
+		View::setPosted(print_r($ary,true));
 	}
 	
 	public function logoutAction() {
